@@ -6,20 +6,26 @@ import requests
 
 
 CORE_NAME = "IRF21P1"
-AWS_IP = "localhost"
+# AWS_IP = "localhost"
+AWS_IP = "13.59.253.84"
+
 
 
 # [CAUTION] :: Run this script once, i.e. during core creation
 
-
+# def delete_core(core=CORE_NAME):
+#     print(os.system('/opt/homebrew/Cellar/solr/8.9.0/bin/solr delete -c {core}'.format(core=core)))
 def delete_core(core=CORE_NAME):
     print(os.system('sudo su - solr -c "/opt/solr/bin/solr delete -c {core}"'.format(core=core)))
-
-
+#
 def create_core(core=CORE_NAME):
     print(os.system(
         'sudo su - solr -c "/opt/solr/bin/solr create -c {core} -n data_driven_schema_configs"'.format(
             core=core)))
+# def create_core(core=CORE_NAME):
+#     print(os.system(
+#         '/opt/homebrew/Cellar/solr/8.9.0/bin/solr create -c {core} -n data_driven_schema_configs'.format(
+#             core=core)))
 
 
 class Indexer:
@@ -39,7 +45,103 @@ class Indexer:
         Define all the fields that are to be indexed in the core. Refer to the project doc for more details
         :return:
         '''
-        raise NotImplementedError
+        data = {
+            "add-field": [
+                {
+                    "name": "poi_name",
+                    "type": "string",
+                    "multiValued": False
+                },
+                {
+                    "name": "poi_id",
+                    "type": "plong",
+                    "multiValued": False
+                },
+                {
+                    "name": "verified",
+                    "type": "boolean",
+                    "multiValued": False
+                },
+                {
+                    "name": "country",
+                    "type": "string",
+                    "multiValued": False
+                },
+                {
+                    "name": "tweet_id",
+                    "type": "plong",
+                    "multiValued": False
+                },
+                {
+                    "name": "replied_to_tweet_id",
+                    "type": "plong",
+                    "multiValued": False
+                },
+                {
+                    "name": "replied_to_user_id",
+                    "type": "plong",
+                    "multiValued": False
+                },
+                {
+                    "name": "reply_text",
+                    "type": "text_general",
+                    "multiValued": False
+                },
+                {
+                    "name": "tweet_text",
+                    "type": "text_general",
+                    "multiValued": False
+                },
+                {
+                    "name": "tweet_lang",
+                    "type": "string",
+                    "multiValued": False
+                },
+                {
+                    "name": "hashtags",
+                    "type": "string",
+                    "multiValued": True
+                },
+                {
+                    "name": "mentions",
+                    "type": "string",
+                    "multiValued": True
+                },
+                {
+                    "name": "tweet_urls",
+                    "type": "string",
+                    "multiValued": True
+                },
+                {
+                    "name": "text_en",
+                    "type": "text_en",
+                    "multiValued": False
+                },
+                {
+                    "name": "text_hi",
+                    "type": "text_hi",
+                    "multiValued": False
+                },
+                {
+                    "name": "text_es",
+                    "type": "text_es",
+                    "multiValued": False
+                },
+                {
+                    "name": "tweet_emoticons",
+                    "type": "string",
+                    "multiValued": True
+                },
+                {
+                    "name": "tweet_date",
+                    "type": "pdate",
+                    "multiValued": False
+                },
+            ]
+        }
+        # print(data)
+        print(requests.post(self.solr_url + CORE_NAME + "/schema", json=data).json())
+        # raise NotImplementedError
 
 
 if __name__ == "__main__":

@@ -2,17 +2,18 @@ import os
 import pysolr
 import requests
 
-CORE_NAME = "IRF21_class_demo"
+# CORE_NAME = "IRF21_class_demo"
+CORE_NAME = "IR_DEMO"
 AWS_IP = "localhost"
 
 
 def delete_core(core=CORE_NAME):
-    print(os.system('sudo su - solr -c "/opt/solr/bin/solr delete -c {core}"'.format(core=core)))
+    print(os.system('/opt/homebrew/Cellar/solr/8.9.0/bin/solr delete -c {core}'.format(core=core)))
 
 
 def create_core(core=CORE_NAME):
     print(os.system(
-        'sudo su - solr -c "/opt/solr/bin/solr create -c {core} -n data_driven_schema_configs"'.format(
+        '/opt/homebrew/Cellar/solr/8.9.0/bin/solr create -c {core} -n data_driven_schema_configs'.format(
             core=core)))
 
 
@@ -69,7 +70,7 @@ class Indexer:
         print(self.connection.add(docs))
 
     def add_fields(self):
-        data = {
+        data1 = {
             "add-field": [
                 {
                     "name": "first_name",
@@ -97,6 +98,90 @@ class Indexer:
                 },
             ]
         }
+        data = {
+            "add-field": [
+                {
+                    "name": "poi_name",
+                    "type": "string",
+                    "multiValued": False
+                },
+                {
+                    "name": "poi_id",
+                    "type": "string",
+                    "multiValued": False
+                },
+                {
+                    "name": "verified",
+                    "type": "boolean",
+                    "multiValued": False
+                },
+                {
+                    "name": "country",
+                    "type": "string",
+                    "multiValued": False
+                },
+                {
+                    "name": "id",
+                    "type": "plong",
+                    "multiValued": False
+                },
+                {
+                    "name": "replied_to_tweet_id",
+                    "type": "plong",
+                    "multiValued": False
+                },
+                {
+                    "name": "replied_to_user_id",
+                    "type": "plong",
+                    "multiValued": False
+                },
+                {
+                    "name": "reply_text",
+                    "type": "text_general",
+                    "multiValued": True
+                },
+                {
+                    "name": "reply_text",
+                    "type": "text_general",
+                    "multiValued": True
+                },
+                {
+                    "name": "tweet_text",
+                    "type": "text_general",
+                    "multiValued": True
+                },
+                {
+                    "name": "tweet_lang",
+                    "type": "plong",
+                    "multiValued": False
+                },
+                {
+                    "name": "hashtags",
+                    "type": "string",
+                    "multiValued": True
+                },
+                {
+                    "name": "mentions",
+                    "type": "string",
+                    "multiValued": True
+                },
+                {
+                    "name": "tweet_urls",
+                    "type": "strings",
+                    "multiValued": True
+                },
+                {
+                    "name": "tweet_emoticons",
+                    "type": "string",
+                    "multiValued": True
+                },
+                {
+                    "name": "tweet_date",
+                    "type": "pdate",
+                    "multiValued": False
+                },
+            ]
+        }
 
         print(requests.post(self.solr_url + CORE_NAME + "/schema", json=data).json())
 
@@ -105,4 +190,4 @@ if __name__ == "__main__":
     i = Indexer()
     i.do_initial_setup()
     i.add_fields()
-    i.create_documents(collection)
+    #i.create_documents(collection)
