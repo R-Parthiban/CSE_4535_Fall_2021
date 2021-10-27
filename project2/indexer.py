@@ -21,14 +21,21 @@ class Indexer:
         """ This function adds each tokenized document to the index. This in turn uses the function add_to_index
             Already implemented."""
         for t in tokenized_document:
-            self.add_to_index(t, doc_id)
+            self.add_to_index(t, doc_id,len(tokenized_document))
 
-    def add_to_index(self, term_, doc_id_):
+    def add_to_index(self, term_, doc_id_,doc_length):
         """ This function adds each term & document id to the index.
             If a term is not present in the index, then add the term to the index & initialize a new postings list (linked list).
             If a term is present, then add the document to the appropriate position in the posstings list of the term.
             To be implemented."""
-        raise NotImplementedError
+        if term_ not in list(self.inverted_index.keys()):
+            new_linked_list = LinkedList()
+            new_linked_list.insert_at_end(doc_id_,doc_length,0.0)
+            self.inverted_index[term_] = new_linked_list
+
+        else:
+            get_existing_linked_list = self.inverted_index[term_]
+            get_existing_linked_list.insert_at_end(doc_id_,doc_length,0.0)
 
     def sort_terms(self):
         """ Sorting the index by terms.
@@ -41,9 +48,13 @@ class Indexer:
     def add_skip_connections(self):
         """ For each postings list in the index, add skip pointers.
             To be implemented."""
-        raise NotImplementedError
+        for term in self.inverted_index:
+            self.inverted_index[term].add_skip_connections()
 
-    def calculate_tf_idf(self):
+    def calculate_tf_idf(self,num_of_docs):
         """ Calculate tf-idf score for each document in the postings lists of the index.
             To be implemented."""
-        raise NotImplementedError
+        for _key in self.inverted_index.keys():
+            posting_list = self.inverted_index.get(_key)
+            posting_list.idf = num_of_docs / posting_list.length
+            posting_list.calculate_tf_tf_idf()
